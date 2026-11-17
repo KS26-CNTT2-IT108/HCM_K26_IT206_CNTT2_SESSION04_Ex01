@@ -1,0 +1,42 @@
+SESSION04
+[Vận dụng chuyên sâu] Thiết kế giải pháp Prompting ứng dụng thực tế cho Kỹ thuật Prompting Nâng cao (Logic & Chuỗi)
+
+Tên lớp: HCM K26 CNTT2
+Môn học: Kỹ năng PROMPTING với AI
+Họ và tên: LƯƠNG THANH THƯ
+
+1. Mục tiêu bài tập & Bối cảnh thực tếMục tiêu: Ứng dụng kỹ thuật Prompting nâng cao (Logic & Chuỗi) để thiết kế một hệ thống tự động hóa công việc, rèn luyện tư duy lập luận và kiểm soát rủi ro dữ liệu.Bối cảnh: Cửa hàng trực tuyến tiếp nhận hàng trăm khiếu nại mỗi ngày, nhưng dữ liệu thô thường lộn xộn, thiếu thông tin (như mã đơn hàng) hoặc chứa cảm xúc bức xúc. Hệ thống cần tự động phân tích và xử lý an toàn mà không làm sập quy trình.2. Ràng buộc & Cơ chế xử lý bẫy dữ liệu (Error Handling)Bẫy dữ liệu: Khách hàng khiếu nại nhưng bỏ quên mã đơn hàng (order_id = null) hoặc nhập liệu sai định dạng.Giải pháp: Thiết kế câu lệnh điều kiện (If-Else logic) ngay ở bước đầu tiên để phát hiện dữ liệu khuyết thiếu $\rightarrow$ Dừng chuỗi xử lý chính và kích hoạt kịch bản phụ yêu cầu bổ sung thông tin thay vì để AI tự bịa đặt kết quả (hallucination).3. Yêu cầu đầu ra chi tiết (I/O Specification)Input (Đầu vào): Tin nhắn khiếu nại thô từ khách hàng (dạng văn bản tự do).Output (Đầu ra mong muốn): Báo cáo cấu trúc gồm 4 phần: Trạng thái kiểm tra dữ liệu, Quá trình lập luận (CoT), Mức độ khẩn cấp và Mẫu phản hồi chuẩn hóa gửi khách hàng.4. Hệ thống Prompt thực thi theo chuỗi (Prompt Chaining)Bạn có thể sử dụng đoạn Prompt tích hợp dưới đây để chạy thử nghiệm trên AI:MarkdownBạn là Trưởng bộ phận CSKH tự động. Hãy xử lý tin nhắn khiếu nại của khách hàng qua chuỗi 3 bước khắt khe sau:
+
+### DỮ LIỆU ĐẦU VÀO:
+"""
+[Điền nội dung khiếu nại của khách hàng vào đây]
+"""
+---
+### QUY TRÌNH XỬ LÝ (BẮT BUỘC TUÂN THỦ):
+
+#### BƯỚC 1: KIỂM TRA LỖI & ĐỨT GÃY DỮ LIỆU (ERROR HANDLING)
+- Quét xem dữ liệu đầu vào có chứa **Mã đơn hàng (Order ID)** hoặc **Số điện thoại** hay không.
+- **Rẽ nhánh điều kiện:**
+  - NẾU THIẾU thông tin định danh: Dừng ngay việc xử lý khiếu nại $\rightarrow$ Ghi nhận trạng thái `[LỖI: THIẾU DỮ LIỆU]` và chuyển sang soạn thảo câu lệnh yêu cầu khách cung cấp bổ sung.
+  - NẾU ĐỦ thông tin: Cho phép chuyển sang Bước 2.
+
+#### BƯỚC 2: LẬP LUẬN TỪNG BƯỚC (CHAIN-OF-THOUGHT)
+*(Chỉ thực hiện khi dữ liệu ở Bước 1 hợp lệ)*
+- Phân tích chi tiết vấn đề khách hàng gặp phải (sai sản phẩm, thiếu hàng, hay lỗi vận chuyển).
+- Truy tìm nguyên nhân gốc rễ (Root Cause) có thể xảy ra ở khâu kho bãi hay giao nhận.
+- Đánh giá mức độ khẩn cấp (Thấp / Trung bình / Cao) dựa trên sắc thái cảm xúc.
+
+#### BƯỚC 3: XUẤT BẢN KẾT QUẢ ĐẦU RA (ACTIONABLE OUTPUT)
+Trình bày kết quả theo đúng cấu trúc Markdown:
+1. **Trạng thái kiểm tra:** [Hợp lệ / Lỗi đứt gãy thiếu dữ liệu]
+2. **Quá trình lập luận (CoT):** [Trình bày rõ các bước suy luận logic từ vấn đề đến nguyên nhân]
+3. **Mức độ khẩn cấp:** [Thấp / Trung bình / Cao]
+4. **Mẫu phản hồi gửi khách hàng:** [Lời thoại lịch sự, xoa dịu và hướng dẫn bước tiếp theo]
+5. Kết quả chạy thử nghiệm thực tế (Simulation Test Run)Dữ liệu đầu vào giả định (Có bẫy thiếu thông tin):"Shop giao thiếu hàng rồi mà nhắn tin mãi không thấy trả lời, đơn hàng của tôi chẳng có mã gì cả nhưng bực mình lắm rồi đấy!"Kết quả phản hồi thực tế từ AI:Markdown1. **Trạng thái kiểm tra:** Lỗi đứt gãy thiếu dữ liệu (Kích hoạt Error Handling ở Bước 1)
+2. **Quá trình lập luận (CoT):** 
+   - Ghi nhận thông tin phản hồi về việc thiếu hàng và thái độ bức xúc của khách.
+   - Kiểm tra trường định danh: Không tìm thấy Mã đơn hàng (`order_id = null`) trong văn bản.
+   - Theo quy tắc an toàn hệ thống, AI từ chối tra cứu mù để tránh nhầm lẫn dữ liệu.
+3. **Mức độ khẩn cấp:** Cao (Khách hàng đang rất tức giận).
+4. **Mẫu phản hồi gửi khách hàng:** 
+   "Dạ em rất xin lỗi chị vì trải nghiệm không vui và sự chậm trễ vừa rồi ạ. Để em có thể kiểm tra ngay tình trạng 
